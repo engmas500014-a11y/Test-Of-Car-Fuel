@@ -17,7 +17,15 @@ const AIInsights: React.FC<Props> = ({ records, stats }) => {
     
     setLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // Safely access API KEY
+      const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : '';
+      if (!apiKey) {
+          setInsight("مفتاح API الخاص بالذكاء الاصطناعي غير متوفر.");
+          setLoading(false);
+          return;
+      }
+
+      const ai = new GoogleGenAI({ apiKey: apiKey });
       const prompt = `بناءً على سجل استهلاك السيارة:
       - متوسط التكلفة اليومية: ${stats.averageDailyPrice.toFixed(2)} جنيه مصري
       - إجمالي المسافة المقطوعة: ${stats.totalDistance} كم
